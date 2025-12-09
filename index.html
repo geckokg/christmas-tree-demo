@@ -1,4 +1,10 @@
-
+<!--
+ * @Author: Tina Huang
+ * @Date: 2022-12-09 21:29:19
+ * @LastEditors: Tina Huang
+ * @LastEditTime: 2022-12-10 15:35:42
+ * @Description: 
+-->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -76,7 +82,7 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        display: none;
+        /* display: none; */
       }
 
       @keyframes shack {
@@ -805,10 +811,10 @@ function drawStars() {
 
 
     let myLabels = [
-      "祝高圆圆~",
-      "圣诞快乐乐乐乐乐乐乐",
-      "——————————",
-      "——————————",
+      "秋云宝贝",
+      "Merry Christmas",
+      "健健康康，平安喜乐",
+      "一定要站在你所热爱的世界里闪闪发光",
     ];
     
     function init() {
@@ -827,13 +833,24 @@ function drawStars() {
         }, 1000 * i);
       }      
     }
+    let init_flag = false;
+      // music
+      let music_url = "http://music.163.com/song/media/outer/url?id=1892513656.mp3";
+      let _music = new Audio(music_url);
+      window.onclick = function() {
+        if(init_flag) return;
+        init_flag = true;
+        _music.play();
         init();
+        let mask = document.getElementById("mask");
+        mask.remove();
         createParticles()
         drawStar();
         drawMain();
         mainTl.add(starTl, 0);
         gsap.globalTimeline.timeScale(1.5); //  圣诞树开始绘画时小光点动画的绘画速率，越大越快
         drawStars();
+      }
   
   </script>
 </html>
