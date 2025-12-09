@@ -75,10 +75,9 @@
 
   // particles
   const particles = [];
-  function spawn(x,y,count=20,spread=120,vel=3,color=null){
+  function spawn(x,y,count=20,vel=3,color=null){
     for(let i=0;i<count;i++){
       const a = Math.random()*Math.PI*2;
-      const s = Math.random()*0.8+0.6;
       const speed = (Math.random()*0.6+0.4)*vel;
       particles.push({x:x,y:y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed - (Math.random()*1.5),life:60+Math.random()*60,size:2+Math.random()*8,age:0,color:color||randColor()});
       if(particles.length>2000) particles.shift();
@@ -103,7 +102,7 @@
     // gentle random twinkles
     if(Math.random()<0.08){
       const o = ornaments[Math.floor(Math.random()*ornaments.length)];
-      if(o) spawn(o.x + (Math.random()-0.5)*10, o.y + (Math.random()-0.5)*10, 3, 30, 1.8, o.color);
+      if(o) spawn(o.x + (Math.random()-0.5)*10, o.y + (Math.random()-0.5)*10, 3, 1.8, o.color);
     }
   }
 
@@ -146,9 +145,18 @@
   }
 
   function hexToRGBA(h, a){
-    const c = h.replace('#','');
-    const r = parseInt(c.substr(0,2),16), g=parseInt(c.substr(2,2),16), b=parseInt(c.substr(4,2),16);
-    return `rgba(${r},${g},${b},${a})`;
+    if(!h || typeof h !== 'string') return `rgba(255,255,255,${a||0.5})`;
+    const c = h.replace('#','').toLowerCase();
+    if(c.length !== 6) return `rgba(255,255,255,${a||0.5})`;
+    try{
+      const r = parseInt(c.substr(0,2),16);
+      const g = parseInt(c.substr(2,2),16);
+      const b = parseInt(c.substr(4,2),16);
+      if(isNaN(r) || isNaN(g) || isNaN(b)) return `rgba(255,255,255,${a||0.5})`;
+      return `rgba(${r},${g},${b},${Math.max(0,Math.min(1,a||0.5))})`;
+    }catch(e){
+      return `rgba(255,255,255,${a||0.5})`;
+    }
   }
 
   function loop(){
@@ -165,7 +173,7 @@
 
   function onPointer(e){
     const p = toLocal(e);
-    spawn(p.x,p.y,30,160,3+Math.random()*2);
+    spawn(p.x,p.y,30,3+Math.random()*2);
   }
 
   window.addEventListener('click', onPointer);
@@ -193,7 +201,7 @@
     placeOrnaments();
     // small ambient particles at top
     const cx = window.innerWidth/2, ty = window.innerHeight*0.3;
-    for(let i=0;i<40;i++) spawn(cx + (Math.random()-0.5)*100, ty + Math.random()*40,1,40,0.6);
+    for(let i=0;i<40;i++) spawn(cx + (Math.random()-0.5)*100, ty + Math.random()*40,1,0.6);
     loop();
   }
 
