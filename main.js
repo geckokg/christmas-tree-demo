@@ -1,6 +1,14 @@
 (()=>{
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
+  // quick sanity draw to detect canvas rendering early
+  try{
+    ctx.fillStyle = 'red';
+    ctx.fillRect(10,10,40,40);
+    console.log('[christmas] quick sanity rect drawn');
+  }catch(e){
+    console.error('[christmas] canvas quick-draw failed', e);
+  }
   let W=0,H=0,animId=null,playing=true;
 
   function resize(){
@@ -59,7 +67,7 @@
       const radius = 20 + t * (tree.width/2);
       const x = cx + Math.sin(angle) * radius * (0.7 + Math.random()*0.3) * (0.6 + t*0.6);
       const y = cy - (1-t)* (tree.tiers*40) + (t*70*(0.8+Math.random()*0.4));
-      ornaments.push({x,y,r:6+Math.random()*6,color:pick(['#ff3b30','#ffd60a','#0af','#ff6ec7','#7cf']}));
+      ornaments.push({x,y,r:6+Math.random()*6,color:pick(['#ff3b30','#ffd60a','#0af','#ff6ec7','#7cf'])});
     }
   }
 
@@ -165,12 +173,16 @@
 
   // play/pause
   const btn = document.getElementById('togglePlay');
-  btn.addEventListener('click', ()=>{
+  if(btn){
+    btn.addEventListener('click', ()=>{
     playing = !playing;
     btn.textContent = playing ? '暂停' : '播放';
     if(playing){ loop(); }
     else cancelAnimationFrame(animId);
-  });
+    });
+  }else{
+    console.warn('[christmas] togglePlay button not found');
+  }
 
   // init
   function init(){
@@ -185,7 +197,18 @@
     loop();
   }
 
-  init();
+  try{
+    init();
+  }catch(err){
+    console.error('[christmas] init failed', err);
+    // show error message on canvas so user sees something
+    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+    ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
+    ctx.fillStyle = '#fff';
+    ctx.font = '18px sans-serif';
+    ctx.fillText('初始化出错，请查看控制台 (DevTools)', 20, 40);
+  }
   // expose for debugging
   window.__christmas = {spawn, particles, ornaments};
 
