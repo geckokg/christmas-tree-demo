@@ -850,38 +850,6 @@ function drawStars() {
         gsap.globalTimeline.timeScale(1.5); //  圣诞树开始绘画时小光点动画的绘画速率，越大越快
         drawStars();
       }
-
-      // 防止外部脚本或插件错误导致页面跳转
-      window.addEventListener('beforeunload', function(e) {
-        if(!init_flag) {
-          e.preventDefault();
-          e.returnValue = '';
-          return false;
-        }
-      });
-
-      // 捕获并阻止控制台错误导致的全局跳转
-      window.addEventListener('error', function(e) {
-        if(e.message && (e.message.includes('trial') || e.message.includes('plugin') || e.message.includes('GSAP'))) {
-          e.preventDefault();
-          console.warn('[Christmas] 插件加载警告已忽略:', e.message);
-          return true;
-        }
-      }, true);
-
-      // 防止未捕获的 Promise 拒绝
-      window.addEventListener('unhandledrejection', function(e) {
-        if(e.reason && e.reason.toString().includes('trial')) {
-          e.preventDefault();
-          console.warn('[Christmas] Promise 拒绝已忽略:', e.reason);
-        }
-      });
-
-      // 禁用导航到外部错误页面的脚本
-      Object.defineProperty(window, '__GSAP_TRIAL_', {
-        get: function() { return null; },
-        set: function(v) { console.warn('[Christmas] 试用版检测已禁用'); }
-      });
   
   </script>
 </html>
